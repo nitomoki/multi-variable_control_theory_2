@@ -5,6 +5,7 @@ from curvature import *
 from controller_mpc import *
 from controller_lqr import *
 from plot import *
+from map_creator import *
 from tqdm import tqdm
 import time
 
@@ -23,12 +24,9 @@ def main():
     Kf = 10000
     Kr = 10000
     umax = 0.1
-    xmax = [1., 0.5, 2., 1., 0.5]
 
-    curvature_map = np.array([
-            [35., 15.7, 31.4, 15.7, 35., 62.8, 22.6, 11.8, 23.6, 23.6, 23.6, 11.8, 22.6, 62.8],
-            [0.,  -30., 30., -30.,  0., -20.,  0.,  -15.,  15., -15.,  15., -15.,  0.,  -20.]
-            ])
+    cource = 2
+    curvature_map = map_creator(cource)
 
     a11 = 2*(Kf + Kr)/M
     a12 = 2*(lf*Kf - lr*Kr)/M
@@ -67,7 +65,7 @@ def main():
     ### cost function setup
     # lqr
     Q = np.diag([1, 0.01, 0.01, 0.01, 0.01])
-    R = 1000.0
+    R = 5000.0
     # feedback gain by lqr
     K, P, e = lqr(A, B, Q, R)
 
@@ -108,10 +106,9 @@ def main():
 
     max_error = np.amax(np.abs(X), axis=1)
     elapsed_time = time.time() - start
-    title = 'Cource 1  LQR Controller   R:' + str(R) + "\nProcessing time: {0}".format(round(elapsed_time, 2)) + "[sec]" + "\nMax tracking error: {0}".format(round(max_error[0], 2)) + "[m]"
-    plot(title, T, X, U, RHO)
+    title = 'Cource ' + str(cource) + '  LQR Controller   R:' + str(R) + "\nProcessing time: {0}".format(round(elapsed_time, 2)) + "[sec]" + "\nMax tracking error: {0}".format(round(max_error[0], 2)) + "[m]"
+    plot(title, T, X, U, RHO, cource=cource)
 
-    
 
 
 if __name__ == "__main__":
