@@ -5,15 +5,16 @@ from curvature import *
 from controller_mpc import *
 from controller_lqr import *
 import matplotlib.pyplot as plt
+from plot import *
 from tqdm import tqdm
 import seaborn as sns
+import time
 
 
 
 
 
 def main():
-    sns.set()
 
     # input demension
     n = 5
@@ -23,13 +24,10 @@ def main():
     M = 350.
     I = 200.
     V = 20.*(1000./3600.)
-    #V = 6.8*(1000./3600.)
-    #V = 15.*(1000./3600.)
     lf = 1.
     lr = 0.28
     Kf = 10000
     Kr = 10000
-    #umax = 0.1
     umax = 0.1
     xmax = [1., 0.5, 2., 1., 0.5]
 
@@ -37,10 +35,6 @@ def main():
             [35., 15.7, 31.4, 15.7, 35., 62.8, 22.6, 11.8, 23.6, 23.6, 23.6, 11.8, 22.6, 62.8],
             [0.,  -30., 30., -30.,  0., -20.,  0.,  -15.,  15., -15.,  15., -15.,  0.,  -20.]
             ])
-    #curvature_map = np.array([
-    #        [35., 15.7, 31.4, 15.7, 35., 62.8, 22.6, 11.8, 23.6, 23.6, 23.6, 11.8, 22.6, 62.8],
-    #        [0.,  -30., 30., -30.,  0., -20.,  0.,  -20.,  20., -20.,  20., -20.,  0.,  -20.]
-    #        ])
 
     a11 = 2*(Kf + Kr)/M
     a12 = 2*(lf*Kf - lr*Kr)/M
@@ -77,12 +71,9 @@ def main():
 
 
     ### cost function setup
-    # lqr
     Q = np.diag([1, 0.01, 0.01, 0.01, 0.01])
-    R = 2000.0
+    R = 5000.0
     S = np.diag([100., 100., 100., 100., 100.])
-    # feedback gain by lqr
-    K, P, e = lqr(A, B, Q, R)
 
     # mpc
     N = 20
@@ -132,14 +123,14 @@ def main():
 
     bar = tqdm(total = (int)(df/(V*dt)))
 
+    start = time.time()
     while d < df:
         T = np.concatenate((T,np.array([t])))
         X = np.concatenate((X,x), axis=1)
         U = np.concatenate((U, np.array([u])))
         D = np.concatenate((D, np.array([d])))
         RHO = np.concatenate((RHO, np.array([rho])))
-        #u = controller_mpc(Ahat, Bhat, What, Qhat, Rhat, n, m, N, hd, umax, curvature_map, V, t,x)
-        u = controller_lqr(K, x)
+        u = controller_mpc(Ahat, Bhat, What, Qhat, Rhat, n, m, N, hd, umax, curvature_map, V, t,x)
         u = min(max(-umax,u),umax)
         xd = vehicle(A, B, W, V, curvature_map, t, x, u)
 
@@ -149,57 +140,11 @@ def main():
         t = t + dt
         bar.update(1)
 
+    max_error = np.amax(np.abs(X), axis=1)
+    elapsed_time = time.time() - start
+    title = 'Cource 1  LQR Controller   R:' + str(R) + "\nProcessing time: {0}".format(round(elapsed_time, 2)) + "[sec]" + "\nMax tracking error: {0}".format(round(max_error[0], 2)) + "[m]"
+    plot(title, T, X, U, RHO)
     
-    fig1 = plt.figure()
-    fig2 = plt.figure()
-    ax1 = fig1.add_subplot(611)
-    ax1.plot(T, X[0,:], label='x1')
-    ax1.set_xlabel('t')
-    ax1.axes.xaxis.set_ticklabels([])
-    ax1.legend(bbox_to_anchor=(0, 1), loc='upper left')
-
-    ax2 = fig1.add_subplot(612)
-    ax2.plot(T, X[1,:], label='x2')
-    ax2.set_xlabel('t')
-    ax2.axes.xaxis.set_ticklabels([])
-    ax2.legend(bbox_to_anchor=(0, 1), loc='upper left')
-
-    ax3 = fig1.add_subplot(613)
-    ax3.plot(T, X[2,:], label='x3')
-    ax3.set_xlabel('t')
-    ax3.axes.xaxis.set_ticklabels([])
-    ax3.legend(bbox_to_anchor=(0, 1), loc='upper left')
-
-    ax4 = fig1.add_subplot(614)
-    ax4.plot(T, X[3,:], label='x4')
-    ax4.set_xlabel('t')
-    ax4.axes.xaxis.set_ticklabels([])
-    ax4.legend(bbox_to_anchor=(0, 1), loc='upper left')
-
-    ax5 = fig1.add_subplot(615)
-    ax5.plot(T, X[4,:], label='x5')
-    ax5.set_xlabel('t')
-    ax5.axes.xaxis.set_ticklabels([])
-    ax5.legend(bbox_to_anchor=(0, 1), loc='upper left')
-
-    axu = fig1.add_subplot(616)
-    axu.plot(T, U, label='u')
-    axu.set_xlabel('t')
-    axu.legend(bbox_to_anchor=(0, 1), loc='upper left')
-
-    #axd = fig2.add_subplot(211)
-    #axd.plot(T, D)
-    #axd.set_xlabel('t')
-    #axd.set_ylabel('d')
-
-    axrho = fig2.add_subplot(111)
-    axrho.plot(T, RHO)
-    axrho.set_xlabel('t')
-    axrho.set_ylabel('ρ')
-
-    mng = plt.get_current_fig_manager()
-    plt.show()
-    #u = controller_mpc(Ahat, Bhat, What, Qhat, Rhat, n, m, N, hd, umax, curvature_map, V, t,x)
 
 
 if __name__ == "__main__":

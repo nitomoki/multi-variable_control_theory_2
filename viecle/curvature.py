@@ -26,3 +26,5 @@ def curvature(V, curvature_map, t):
                 return 0
             else:
                 return 1./c
+
+    return 0
