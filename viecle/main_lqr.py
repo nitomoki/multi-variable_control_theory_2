@@ -5,15 +5,8 @@ from curvature import *
 from controller_mpc import *
 from controller_lqr import *
 from plot import *
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 import time
-
-import seaborn as sns
-
-
-
-
 
 def main():
 

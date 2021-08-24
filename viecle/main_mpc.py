@@ -4,15 +4,9 @@ from vehicle import *
 from curvature import *
 from controller_mpc import *
 from controller_lqr import *
-import matplotlib.pyplot as plt
 from plot import *
 from tqdm import tqdm
-import seaborn as sns
 import time
-
-
-
-
 
 def main():
 
