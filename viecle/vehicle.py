@@ -23,6 +23,5 @@ def vehicle(A, B, W, V, curvature_map, t, x, u):
 
     rho = curvature(V, curvature_map, t)
     xd = A@x + B*u + W*rho
-    #xd = A@x  + W*rho
     return xd
 

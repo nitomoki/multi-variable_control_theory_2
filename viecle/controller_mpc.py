@@ -46,9 +46,6 @@ def controller_mpc(Ahat, Bhat, What, Qhat, Rhat, n, m, N, hd, umax, curvature_ma
     h = matrix(np.array([]))
     
     sol = cvxopt.solvers.qp(P, q, A=A, b=b)
-    #print(sol)
-    #print(sol["x"][Nn,0])
-    #print(sol["primal objective"])
 
     return sol["x"][Nn,0]
 
