@@ -25,7 +25,7 @@ def main():
     Kr = 10000
     umax = 0.1
 
-    course = 2
+    course = 1
     curvature_map = map_creator(course)
 
     a11 = 2*(Kf + Kr)/M
@@ -65,7 +65,7 @@ def main():
     ### cost function setup
     # lqr
     Q = np.diag([1, 0.01, 0.01, 0.01, 0.01])
-    R = 5000.0
+    R = 2000.0
     # feedback gain by lqr
     K, P, e = lqr(A, B, Q, R)
 
