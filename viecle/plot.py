@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def plot(title, T, X, U, RHO, show_cource=False, plot_limit=True, cource=1):
+def plot(title, T, X, U, RHO, show_course=False, plot_limit=True, course=1):
     sns.set()
     xmax = [[-10., 10.], [-1.3, 1.3], [-6., 6.], [-1.3, 1.3], [-0.5, 0.5]]
-    umax = [-0.1, 0.1]
+    umax = [-0.11, 0.11]
 
     fig1 = plt.figure()
     fig1.suptitle(title)
@@ -45,9 +45,9 @@ def plot(title, T, X, U, RHO, show_cource=False, plot_limit=True, cource=1):
     axu.set_xlabel('t')
     axu.legend(bbox_to_anchor=(0, 1), loc='upper left')
 
-    if show_cource:
+    if show_course:
         fig2 = plt.figure()
-        fig2.suptitle('Cource ' + str(cource))
+        fig2.suptitle('Course ' + str(course))
         axrho = fig2.add_subplot(111)
         axrho.plot(T, RHO)
         axrho.set_xlabel('t')

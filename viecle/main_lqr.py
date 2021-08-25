@@ -25,8 +25,8 @@ def main():
     Kr = 10000
     umax = 0.1
 
-    cource = 2
-    curvature_map = map_creator(cource)
+    course = 2
+    curvature_map = map_creator(course)
 
     a11 = 2*(Kf + Kr)/M
     a12 = 2*(lf*Kf - lr*Kr)/M
@@ -106,8 +106,8 @@ def main():
 
     max_error = np.amax(np.abs(X), axis=1)
     elapsed_time = time.time() - start
-    title = 'Cource ' + str(cource) + '  LQR Controller   R:' + str(R) + "\nProcessing time: {0}".format(round(elapsed_time, 2)) + "[sec]" + "\nMax tracking error: {0}".format(round(max_error[0], 2)) + "[m]"
-    plot(title, T, X, U, RHO, cource=cource)
+    title = 'Course ' + str(course) + '  LQR Controller   R:' + str(R) + "\nProcessing time: {0}".format(round(elapsed_time, 2)) + "[sec]" + "\nMax tracking error: {0}".format(round(max_error[0], 2)) + "[m]"
+    plot(title, T, X, U, RHO, course=course)
 
 
 
